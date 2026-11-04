@@ -118,10 +118,15 @@ sid:1000001; rev:1;	 | Unique ID and revision
 ```
  # Key Takeaways
 -A Snort rule = Header (action/proto/src/dst/direction) + Options (what to match + metadata).
+
 -The header decides what happens on match; the options decide what actually triggers the match.
+
 -sid must be unique — local rules typically use 1000000+ range.
+
 -Use threshold to suppress noisy alerts; use flow and flags to narrow matching.
+
 -Always increment rev when you edit a rule, so you can track changes.
+
 -Well-written rules are specific, low-false-positive, and mapped to a real threat (often tied to a MITRE technique).
 
 
