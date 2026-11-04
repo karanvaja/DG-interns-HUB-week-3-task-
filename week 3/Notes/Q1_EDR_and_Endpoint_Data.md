@@ -30,18 +30,18 @@
 - Antivirus waits for a known bad file and blocks it. EDR watches behaviour and lets the analyst decide.
 - Here's a simple comparison:
 
-| Feature | Traditional Antivirus | EDR |
-|---------|------------------------|-----|
-| **How it detects** | Mostly signatures (known malware hashes and patterns) | Behaviour, heuristics, ML, plus signatures |
-| **Main goal** | Prevent known threats from running | Detect, investigate and respond to threats |
-| **Visibility** | Very limited — basically "clean or infected" | Deep telemetry: processes, files, network, registry, users |
-| **Unknown / zero-day threats** | Usually misses them | Can catch suspicious behaviour even if the file is new |
-| **Fileless attacks (e.g. PowerShell, LOLBins)** | Weak | Strong — sees the process behaviour |
-| **Response options** | Quarantine file, block hash | Isolate host, kill process, rollback, remote response |
-| **Investigation support** | Almost none | Full timeline, process tree, root cause |
-| **Threat hunting** | Not really a feature | Built-in hunting and queries |
-| **Analyst effort needed** | Low — mostly automated | Higher — needs a SOC analyst to triage and respond |
-| **Typical role in a SOC** | Baseline protection layer | Main detection and response tool on endpoints |
+|           Feature                                    |               Traditional Antivirus                       |                    EDR                                     |
+|------------------------------------------------------|-----------------------------------------------------------|------------------------------------------------------------|
+| **How it detects**                                   | Mostly signatures (known malware hashes and patterns)     | Behaviour, heuristics, ML, plus signatures                 |
+| **Main goal**                                        | Prevent known threats from running                        | Detect, investigate and respond to threats                 |
+| **Visibility**                                       | Very limited — basically "clean or infected"              | Deep telemetry: processes, files, network, registry, users |
+| **Unknown / zero-day threats**                       | Usually misses them                                       | Can catch suspicious behaviour even if the file is new     |
+| **Fileless attacks (e.g. PowerShell, LOLBins)**      | Weak                                                      | Strong — sees the process behaviour                        |
+| **Response options**                                 | Quarantine file, block hash                               | Isolate host, kill process, rollback, remote response      |
+| **Investigation support**                            | Almost none                                               | Full timeline, process tree, root cause                    |
+| **Threat hunting**                                   | Not really a feature                                      | Built-in hunting and queries                               |
+| **Analyst effort needed**                            | Low — mostly automated                                    | Higher — needs a SOC analyst to triage and respond         |
+| **Typical role in a SOC**                            | Baseline protection layer                                 | Main detection and response tool on endpoints              |
 
 ---
 
