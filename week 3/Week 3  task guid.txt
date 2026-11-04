@@ -1,0 +1,237 @@
+====================================================
+WEEK 3 - LINUX LOGS, SYSMON, AUDITD AND SNORT SETUP
+====================================================
+
+GOAL:
+Go deeper into endpoint data by working with Sysmon on Windows and auditd on Linux. Set up Snort and write your first intrusion detection rules.
+
+WHAT YOU WILL LEARN:
+Why endpoint data matters, how Sysmon gives you more Windows logs, how auditd works on Linux, and how Snort detects network activity. You will also learn how to map detection rules to MITRE ATT&CK techniques.
+
+----------------------------------------------------
+THEORETICAL PART:
+----------------------------------------------------
+Prepare a well-structured document answering all these questions in your own words. Use bullet points and tables for answering the questions and name the folder as either "Notes" or "Developing Basic Understanding in SOC". Save every question-answer in a different file (separately).
+
+1. What is Endpoint Detection and Response (EDR)? Why is endpoint data critical for a SOC analyst? How does EDR differ from traditional antivirus?
+
+2. What is Sysmon? How does it differ from standard Windows Event Logs? Include a table comparing Sysmon Event IDs and what they monitor (at minimum: Event ID 1 - Process Create, Event ID 3 - Network Connection, Event ID 11 - File Create, Event ID 22 - DNS Query, Event ID 13 - Registry Value Set).
+
+3. What is auditd on Linux? How does it work, and what is the difference between auditd and syslog? Include a table comparing the two.
+
+4. Explain how Snort works as an IDS/IPS. What is the difference between Snort in IDS mode versus IPS mode? When would a SOC use each?
+
+5. Describe the structure of a Snort rule. Break down the rule header and rule options with examples. Include a table of common rule options (msg, sid, rev, flags, flow, threshold, classtype).
+
+6. What is the difference between signature-based and anomaly-based detection? Give examples of each from a SOC perspective.
+
+7. What is MITRE ATT&CK T1046 (Network Service Discovery)? Note that T1046 was previously named "Network Service Scanning" and is now called "Network Service Discovery" in the ATT&CK framework. How can Snort rules be mapped to MITRE techniques? Provide an example.
+
+8. Create a comparison table of Windows Event Log vs Sysmon vs Linux auditd in terms of what they capture, log format, and use cases for a SOC analyst.
+
+9. What are the key Linux log files a SOC analyst should monitor? Include a table of Log File Path | Purpose | Common Events (at minimum: /var/log/auth.log, /var/log/syslog, /var/log/audit/audit.log, /var/log/kern.log, /var/log/apache2/access.log).
+
+10. Explain the concept of log ingestion and how tools like Wazuh or Splunk collect endpoint and network logs. What is the flow from a log source to a SIEM dashboard?
+
+----------------------------------------------------
+LAB PART:
+----------------------------------------------------
+
+TryHackMe:
+Finish the following free rooms. These are the only rooms verified as free for this week. Do not attempt Premium rooms inside the Cyber Security 101 or SOC Level 1 paths.
+
+- Linux Logging for SOC — https://tryhackme.com/room/linuxloggingforsoc
+- Intro to Logs — https://tryhackme.com/room/introtologs
+- Intro to Log Analysis — https://tryhackme.com/room/introtologanalysis
+- Snort — https://tryhackme.com/room/snort
+
+Prepare a writeup document separately for each and every lab you solve and name the folder as "Writeups".
+
+LetsDefend:
+Finish the following free courses/lessons. Note: the first item was previously listed as "How to Investigate a SIEM Lab" with a stray quote, but its correct URL and title are "How to Investigate a SIEM Alert". Use the correct title.
+
+- How to Investigate a SIEM Alert — https://app.letsdefend.io/training/lessons/how-to-investigate-a-siem-alert
+- Security Solutions — Available in the LetsDefend training library
+- Network Log Analysis — Available in the SOC Analyst Learning Path
+- SIEM 101 — Available in the LetsDefend training library
+- Incident Management — Available in the LetsDefend training library
+- Incident Response on Linux — Available in the LetsDefend training library
+
+Prepare a writeup document separately for each and every lab you solve and name the folder as "Writeups".
+
+----------------------------------------------------
+HANDS-ON TASKS:
+----------------------------------------------------
+
+1. Install Sysmon:
+On your Windows VM, install Sysmon using the SwiftOnSecurity config file. This config is widely used in SOC environments to capture detailed endpoint telemetry.
+
+1. Download Sysmon from the official Microsoft Sysinternals page and extract the ZIP to C:\Sysmon.
+2. Download the SwiftOnSecurity config file:
+   https://raw.githubusercontent.com/SwiftOnSecurity/sysmon-config/master/sysmonconfig-export.xml
+   Save it into the C:\Sysmon folder.
+3. Open an elevated Command Prompt and navigate to C:\Sysmon. Run:
+   sysmon.exe -accepteula -i sysmonconfig-export.xml
+4. Verify installation by opening Event Viewer and navigating to:
+   Applications and Services Logs > Microsoft > Windows > Sysmon > Operational
+5. Take a screenshot of the Sysmon Operational log showing events are being captured.
+
+2. Make Events and Find Them:
+Do the following actions and then find the matching Sysmon events in Event Viewer. Take screenshots of each event.
+
+- Open PowerShell (Sysmon Event ID 1 - Process Create)
+- Create a new user account (Sysmon Event ID 1 - Process Create)
+- Check for network connections (Sysmon Event ID 3 - Network Connection)
+- Create a text file (Sysmon Event ID 11 - File Create)
+
+For each event, document:
+- Event ID
+- Timestamp
+- Key fields (Image, CommandLine, User, SourceIp, DestinationIp, TargetFilename)
+- Why this event matters to a SOC analyst
+
+3. Explore Linux Auditing with auditd:
+On your Ubuntu VM, install auditd and use ausearch to find your commands. Take screenshots of the audit log entries.
+
+1. Install auditd:
+   sudo apt-get install -y auditd
+2. Start and enable the auditd service:
+   sudo systemctl enable auditd --now
+3. Verify the service is running:
+   sudo systemctl status auditd
+4. Run a command to audit:
+   sudo apt install nano
+5. Use ausearch to find that command in the audit log:
+   sudo ausearch -k nano
+   Or search by message type:
+   sudo ausearch -m EXECVE -ts recent
+6. Take a screenshot of the audit log entry showing your command.
+7. Document what fields are available in the audit log (type, msg, exe, command, uid, gid, etc.) and why each is useful.
+
+4. Set Up Snort:
+Install Snort on your Ubuntu VM. Configure HOME_NET and EXTERNAL_NET. Write and test the following starter rules.
+
+IMPORTANT: VirtualBox Ubuntu guests usually name the network interface enp0s3 (or similar), not eth0. Before running any Snort commands, check your interface name with:
+   ip a
+Substitute your actual interface name in all Snort commands below.
+
+1. Update your package repository:
+   sudo apt-get update
+2. Install Snort and its default rules:
+   sudo apt-get install -y snort snort-common snort-rules-default
+3. Verify the installation:
+   snort -V
+   This should return version information.
+4. Edit the Snort configuration file to set your network:
+   sudo nano /etc/snort/snort.conf
+   Set HOME_NET to your local subnet (e.g., 192.168.1.0/24) and EXTERNAL_NET to !$HOME_NET.
+5. Open the local rules file:
+   sudo nano /etc/snort/rules/local.rules
+6. Add the following starter rules:
+
+   alert icmp any any -> $HOME_NET any (msg:"ICMP Ping Detected"; sid:1000001; rev:1;)
+   alert tcp any any -> $HOME_NET 22 (msg:"SSH Connection Attempt"; sid:1000002; rev:1;)
+   alert tcp any any -> $HOME_NET 80 (msg:"HTTP Traffic"; sid:1000003; rev:1;)
+
+7. Test your configuration:
+   sudo snort -T -i <your-interface> -c /etc/snort/snort.conf
+8. Start Snort in console mode:
+   sudo snort -A console -q -c /etc/snort/snort.conf -i <your-interface>
+9. Test with ping and curl from Kali or another VM. Take screenshots of your Snort alerts.
+
+5. Advanced Snort Rule - Detect Nmap SYN Scan and Map to MITRE ATT&CK:
+Write a Snort rule to detect an Nmap SYN scan and map it to MITRE ATT&CK T1046 (Network Service Discovery). Note that T1046 is now named "Network Service Discovery" in the ATT&CK framework.
+
+Add the following rule to /etc/snort/rules/local.rules:
+
+alert tcp $EXTERNAL_NET any -> $HOME_NET any (msg:"MITRE T1046 - Nmap SYN Port Scan Detected"; flags:S; threshold:type threshold, track by_src, count 20, seconds 1; classtype:attempted-recon; metadata:mitre_technique T1046; reference:url,attack.mitre.org/techniques/T1046/; sid:1000004; rev:1;)
+
+Explanation:
+- flags:S — matches TCP packets with only the SYN flag set (half-open scan signature).
+- threshold:type threshold, track by_src, count 20, seconds 1 — alerts when 20 SYN packets from the same source occur in 1 second.
+- classtype:attempted-recon — maps the rule to reconnaissance activity.
+- metadata:mitre_technique T1046 — explicitly tags the rule with the MITRE technique ID.
+- reference:url — provides a link to the official ATT&CK page for T1046.
+- Run nmap -sS <target> from Kali and check Snort alerts. Take screenshots.
+
+6. Build a Cheat Sheet:
+Create a table called "Event ID / Rule - What It Means - When to Use It." Add at least 15 entries. Include important Windows Security, Sysmon, Linux audit, and Snort alert examples.
+
+Required entries (minimum):
+- Windows Security: 4624, 4625, 4688, 4720
+- Sysmon: Event ID 1, 3, 11, 22
+- Linux auditd: EXECVE, USER_LOGIN, USER_AUTH
+- Snort: ICMP Ping Detected, SSH Connection Attempt, HTTP Traffic, Nmap SYN Scan Detected
+
+Example format:
+
+| Event ID / Rule | Source | What It Means | When to Use It |
+|---|---|---|---|
+| 4624 | Windows Security | Successful logon | Investigating normal vs. anomalous logins |
+| 4625 | Windows Security | Failed logon | Detecting brute force attempts |
+| 4688 | Windows Security | Process creation | Tracking program execution |
+| 4720 | Windows Security | New user account created | Detecting persistence (T1136) |
+| 1 | Sysmon | Process Create | Monitoring process execution |
+| 3 | Sysmon | Network Connection | Detecting C2 or lateral movement |
+| 11 | Sysmon | File Create | Detecting dropped files |
+| 22 | Sysmon | DNS Query | Detecting DNS-based C2 |
+| EXECVE | auditd | Command execution | Auditing Linux commands |
+| USER_LOGIN | auditd | User login | Tracking Linux authentication |
+| USER_AUTH | auditd | Authentication attempt | Detecting failed logins |
+| 1000001 | Snort | ICMP Ping Detected | Detecting network reconnaissance |
+| 1000002 | Snort | SSH Connection Attempt | Monitoring SSH access |
+| 1000003 | Snort | HTTP Traffic | Monitoring web traffic |
+| 1000004 | Snort | Nmap SYN Scan Detected | Detecting port scanning (T1046) |
+
+Save the cheat sheet in the "Cheat Sheet" folder.
+
+----------------------------------------------------
+ADVANCED EXTENSION (OPTIONAL):
+----------------------------------------------------
+- Add a custom Sysmon config line for a process you want to monitor (e.g., monitor all executions of certutil.exe or powershell.exe with encoded commands). Test it and take a screenshot.
+- Write a second Snort rule that detects SSH brute force attempts and map it to MITRE ATT&CK T1110 (Brute Force). Include metadata and reference tags.
+- Create a simple dashboard in Wazuh or Splunk (if already installed) showing Sysmon Event ID 1 and 3 counts.
+
+----------------------------------------------------
+LINKEDIN:
+----------------------------------------------------
+- Draft a quick short thought about "Why is endpoint logging (Sysmon and auditd) more valuable than standard OS logs for a SOC analyst?" List 5 main points in your own words and post it on your LinkedIn page.
+- Draft a post about your weekly experience while attaching your report or key findings, including screenshots of Sysmon events, auditd logs, and Snort alerts, and post it on your LinkedIn while tagging DG Interns Hub.
+
+----------------------------------------------------
+SUBMISSION FORMAT:
+----------------------------------------------------
+Create a folder named "DG Interns HUB" in your system or Google Drive of the internship email you created. Add the Week 3 folder into it. Submit either the Google Drive link or the folder shared link.
+
+WEEK 3 FOLDER STRUCTURE:
+DG Interns Hub
+	|
+	|-- Week 3
+	|	|
+	|	|-- Notes Folder (Including all 10 theoretical question answers into separate files)
+	|	|-- Writeups Folder (Including every lab/room writeup into separate files)
+	|	|-- Findings Folder (Including all your screenshots of the Hands-On part: Sysmon events, auditd logs, Snort setup, and Snort alerts)
+	|	|-- Cheat Sheet Folder (Event ID / Rule - What It Means - When to Use It table with at least 15 entries)
+	|	|-- Snort Rules Folder (Your custom local.rules file including starter rules and the T1046 rule)
+	|	|-- Pdf Report of your weekly work
+	|	|-- Presentation Report of your weekly work
+	|	|-- Readme File (showing your whole week into a structured format)
+
+----------------------------------------------------
+IMPORTANT DATES:
+----------------------------------------------------
+- Submission Form will be shared on 4th November 2026.
+- Submission Deadline: 6th November 2026 11:59pm
+  No submissions will be counted after this.
+
+----------------------------------------------------
+EVALUATION:
+----------------------------------------------------
+Evaluation will be counted on Concept clarity, Practical execution, Report quality, LinkedIn activity.
+
+----------------------------------------------------
+RULES:
+----------------------------------------------------
+- No late submission
+- No plagiarism
+- Use only free tools
