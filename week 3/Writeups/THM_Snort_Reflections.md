@@ -1,0 +1,7 @@
+# Personal Notes / Reflections — Snort
+
+- **Sniffer vs Logger:** I learned that while `snort -v` is great for a quick look at live traffic (like tcpdump), the real power comes when you log it to a file (`-l`) and read it back (`-r`). The ASCII mode (`-K ASCII`) was interesting because it splits logs into folders based on IPs, making it easier to browse without Snort.
+- **Alert Modes:** The difference between `fast`, `full`, `cmg`, and `console` modes is crucial. `console` is great for debugging live, but `fast` or `full` are better for log files because they format the alerts cleanly.
+- **Writing Rules:** The task on Snort rules made the syntax very clear. The concept of `sid` (Snort ID) is like giving every detection rule a primary key. I learned that custom rules must start from 1,000,000 to avoid clashing with official rules.
+- **PCAP Analysis:** Using Snort to analyze PCAPs (`-r`) is a superpower for SOC analysts. It means we can replay a historical attack and see exactly which rules would have fired.
+- **Data Acquisition (DAQ):** The note about `afpacket` for IPS mode in Snort 2 was a bit technical, but it makes sense that inline mode requires a different packet capture mechanism than passive sniffing.

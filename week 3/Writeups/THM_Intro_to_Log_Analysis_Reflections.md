@@ -1,0 +1,7 @@
+# Personal Notes / Reflections — Intro to Log Analysis
+
+- **CyberChef is a lifesaver:** I knew CyberChef was for decoding, but seeing it used to process a massive log file with Regex and extract only IP addresses was an eye-opener. It's like a Swiss Army knife for analysts.
+- **Super Timelines:** The concept of pulling logs from different systems (firewall, auth, web) and putting them on a single unified timeline is so important. It makes the "who did what and when" question much easier to answer.
+- **Sigma vs YARA:** This clarified the difference for me. Sigma is for log events (YAML format) so they can be translated to SIEM queries, while YARA is for matching patterns in files/memory (often used for malware).
+- **The command line is still king:** While SIEMs are great, the task with `awk`, `grep`, `sed`, and `cut` showed me that a good analyst must know how to slice and dice text directly in the terminal. It's fast and always available.
+- **Path Traversal encoding:** I noticed the payload `%2E%2E%2F%2E%2E%2Fproc%2Fself%2Fenviron` which translates to `../../proc/self/environ`. The fact that attackers URL-encode these to bypass basic filters is a good reminder to always decode payloads before analyzing them.
