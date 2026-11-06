@@ -1,0 +1,17 @@
+# Week 3 - Linux Logs, Sysmon, Auditd and Snort
+
+This folder contains all the work completed for Week 3 of the DG Interns Hub SOC Analyst Internship.
+
+## Folder Structure
+- **Notes/**: Contains 10 separate `.md` files answering the theoretical questions.
+- **Writeups/**: Contains separate writeups for all TryHackMe and LetsDefend labs.
+- **Findings/**: Contains all screenshots from the hands-on tasks (Sysmon, auditd, Snort).
+- **Cheat Sheet/**: Contains a comprehensive table of 15+ Event IDs and Rules.
+- **Snort Rules/**: Contains the custom `local.rules` file (starter rules + T1046 Nmap rule).
+- **PDF Report**: A comprehensive report of the week's work.
+- **PPT Presentation**: A summary presentation of the week's work.
+
+## Key Learnings
+- Deep endpoint telemetry with Sysmon and auditd.
+- Network intrusion detection with Snort.
+- Troubleshooting environment-specific issues (Kali Linux Snort syntax error).
